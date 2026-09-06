@@ -354,18 +354,21 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
                         )}
                       </div>
 
-                      {/* Info Judul & Status (Responsive Layout) */}
+                      {/* Info Judul & Status */}
                       <div className="min-w-0 flex-1">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-                          <h3 className="truncate text-base font-bold text-slate-900" title={item.title}>
+                        <div className="flex flex-col gap-1.5 sm:flex-row sm:items-start sm:justify-between">
+                          {/* Judul Multiline (Bisa sampai 2 baris) */}
+                          <h3 className="line-clamp-2 text-base font-bold text-slate-900 leading-snug break-words" title={item.title}>
                             {item.title}
                           </h3>
+
+                          {/* Badge Status */}
                           <span className="w-fit shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
                             {item.status || 'AVAILABLE'}
                           </span>
                         </div>
 
-                        <p className="mt-1 flex items-center gap-1 text-xs text-slate-500">
+                        <p className="mt-1.5 flex items-center gap-1 text-xs text-slate-500">
                           <span className="text-blue-600">●</span>{item.locationCity || '-'}
                         </p>
                       </div>
