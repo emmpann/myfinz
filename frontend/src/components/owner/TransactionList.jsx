@@ -1,0 +1,173 @@
+import React from 'react';
+import { CalendarDays, Check, Clock3, MapPin, MessageCircle, UserRound, X } from 'lucide-react';
+
+export default function TransactionList({
+    filteredBookings,
+    totalBookings,
+    filterTransactionStatus,
+    setFilterTransactionStatus,
+    filterStartDate,
+    setFilterStartDate,
+    filterEndDate,
+    setFilterEndDate,
+    filterRenterName,
+    setFilterRenterName,
+    setChatBooking,
+    handleUpdateBookingStatus,
+    updatingBookingId,
+}) {
+    return (
+        <section className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+                <div>
+                    <h2 className="text-xl font-semibold text-slate-900">Transaksi masuk</h2>
+                    <p className="mt-1 text-xs text-slate-500">
+                        Menampilkan <span className="font-semibold text-blue-600">{filteredBookings.length}</span> dari {totalBookings} transaksi
+                    </p>
+                </div>
+            </div>
+
+            <div className="mb-4 grid grid-cols-1 md:grid-cols-4 gap-3">
+                <select
+                    value={filterTransactionStatus}
+                    onChange={(e) => setFilterTransactionStatus(e.target.value)}
+                    className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
+                >
+                    <option value="">Semua Status</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="APPROVED">Approved</option>
+                    <option value="ACTIVE">Active</option>
+                    <option value="COMPLETED">Completed</option>
+                    <option value="CANCELLED">Cancelled</option>
+                </select>
+
+                <input
+                    type="date"
+                    value={filterStartDate}
+                    onChange={(e) => setFilterStartDate(e.target.value)}
+                    className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
+                />
+
+                <input
+                    type="date"
+                    value={filterEndDate}
+                    onChange={(e) => setFilterEndDate(e.target.value)}
+                    className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
+                />
+
+                <input
+                    type="text"
+                    value={filterRenterName}
+                    onChange={(e) => setFilterRenterName(e.target.value)}
+                    placeholder="Cari nama penyewa..."
+                    className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500 placeholder-slate-400"
+                />
+            </div>
+
+            {filteredBookings.length > 0 ? (
+                <div className="space-y-4">
+                    {filteredBookings.map((booking) => (
+                        <div key={booking.id} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                            <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
+                                <div className="min-w-0">
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-blue-600">Permintaan sewa</p>
+                                    <h3 className="mt-1 truncate text-base font-semibold text-slate-900">{booking.title || 'Listing'}</h3>
+                                    <p className="mt-1 text-xs text-slate-500">ID {booking.id.slice(0, 8)}</p>
+                                </div>
+                                <div className="shrink-0 text-right">
+                                    <p className="text-sm font-semibold text-blue-700">Rp {Number(booking.totalRentalPrice || 0).toLocaleString('id-ID')}</p>
+                                    <span className={`mt-2 inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-semibold ${booking.status === 'PENDING' ? 'border-amber-200 bg-amber-50 text-amber-700' : booking.status === 'CANCELLED' ? 'border-red-200 bg-red-50 text-red-700' : booking.status === 'COMPLETED' ? 'border-slate-200 bg-slate-100 text-slate-600' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                                        {booking.status === 'PENDING' ? <Clock3 className="h-3 w-3" /> : booking.status === 'CANCELLED' ? <X className="h-3 w-3" /> : <Check className="h-3 w-3" />}
+                                        {booking.status}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-700">
+                                <div className="flex items-start gap-2"><UserRound className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" /><p><span className="block text-slate-400">Penyewa</span>{booking.renterName || '-'}</p></div>
+                                <div className="flex items-start gap-2"><CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" /><p><span className="block text-slate-400">Periode</span>{new Date(booking.startDate).toLocaleDateString('id-ID')} - {new Date(booking.endDate).toLocaleDateString('id-ID')}</p></div>
+                                <div className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" /><p><span className="block text-slate-400">Lokasi</span>{booking.locationCity || '-'}</p></div>
+                                <div className="flex items-start gap-2"><MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" /><p><span className="block text-slate-400">Kontak</span>{booking.renterPhone || '-'}</p></div>
+                            </div>
+
+                            <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-xs">
+                                <span className="text-slate-500">Deposit</span>
+                                <span className="font-medium text-slate-700">Rp {Number(booking.depositAmount || 0).toLocaleString('id-ID')}</span>
+                            </div>
+
+                            {booking.note && (
+                                <div className="mt-3 rounded-lg bg-blue-50 px-3 py-2 text-xs text-slate-700">
+                                    <span className="font-medium text-blue-700">Catatan penyewa:</span> {booking.note}
+                                </div>
+                            )}
+
+                            <div className="mt-4 flex flex-wrap gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setChatBooking(booking)}
+                                    className="flex-1 rounded-lg border border-slate-200 bg-slate-50 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                                >
+                                    Chat penyewa
+                                </button>
+
+                                {booking.status === 'PENDING' && (
+                                    <>
+                                        <button
+                                            onClick={() => handleUpdateBookingStatus(booking.id, 'APPROVED')}
+                                            disabled={updatingBookingId === booking.id}
+                                            className="flex-1 rounded-lg bg-emerald-600 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+                                        >
+                                            {updatingBookingId === booking.id ? 'Diproses...' : 'Setujui'}
+                                        </button>
+                                        <button
+                                            onClick={() => handleUpdateBookingStatus(booking.id, 'CANCELLED')}
+                                            disabled={updatingBookingId === booking.id}
+                                            className="flex-1 rounded-lg border border-red-200 bg-white py-2 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+                                        >
+                                            {updatingBookingId === booking.id ? 'Diproses...' : 'Tolak'}
+                                        </button>
+                                    </>
+                                )}
+
+                                {booking.status === 'APPROVED' && (
+                                    <>
+                                        <button
+                                            onClick={() => handleUpdateBookingStatus(booking.id, 'ACTIVE')}
+                                            disabled={updatingBookingId === booking.id}
+                                            className="flex-1 rounded-lg bg-blue-600 py-2 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                                        >
+                                            {updatingBookingId === booking.id ? 'Diproses...' : 'Confirm Diambil'}
+                                        </button>
+                                        <button
+                                            onClick={() => handleUpdateBookingStatus(booking.id, 'CANCELLED')}
+                                            disabled={updatingBookingId === booking.id}
+                                            className="flex-1 rounded-lg border border-red-200 bg-white py-2 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+                                        >
+                                            {updatingBookingId === booking.id ? 'Diproses...' : 'Batal'}
+                                        </button>
+                                    </>
+                                )}
+
+                                {booking.status === 'ACTIVE' && (
+                                    <button
+                                        onClick={() => handleUpdateBookingStatus(booking.id, 'COMPLETED')}
+                                        disabled={updatingBookingId === booking.id}
+                                        className="flex-1 rounded-lg bg-emerald-600 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+                                    >
+                                        {updatingBookingId === booking.id ? 'Diproses...' : 'Selesaikan'}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="text-sm text-slate-600 py-4">
+                    {totalBookings === 0
+                        ? 'Belum ada transaksi masuk. Listing yang aktif akan muncul di sini.'
+                        : 'Tidak ada transaksi yang sesuai filter.'}
+                </div>
+            )}
+        </section>
+    );
+}
