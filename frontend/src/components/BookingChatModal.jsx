@@ -40,7 +40,7 @@ export default function BookingChatModal({ booking, currentUser, onClose }) {
     useEffect(() => {
         loadMessages(true);
 
-        const socket = io('http://localhost:5000');
+        const socket = io();
         socket.emit('join-booking', booking?.id);
         socket.on('booking:message', (message) => {
             setMessages((prev) => prev.some((item) => item.id === message.id) ? prev : [...prev, message]);
