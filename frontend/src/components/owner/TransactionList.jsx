@@ -41,6 +41,18 @@ export default function TransactionList({
         return () => clearInterval(interval);
     }, [currentUser]);
 
+    const formatDate = (dateString) => {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '-';
+
+        return date.toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+        });
+    };
+
     // Handler saat tombol Chat penyewa diklik
     const handleOpenChat = async (booking) => {
         const userId = currentUser?.id || localStorage.getItem('myfinz_demo_user_id');
@@ -138,7 +150,10 @@ export default function TransactionList({
 
                                 <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-700">
                                     <div className="flex items-start gap-2"><UserRound className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" /><p><span className="block text-slate-400">Penyewa</span>{booking.renterName || '-'}</p></div>
-                                    <div className="flex items-start gap-2"><CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" /><p><span className="block text-slate-400">Periode</span>{new Date(booking.startDate).toLocaleDateString('id-ID')} - {new Date(booking.endDate).toLocaleDateString('id-ID')}</p></div>
+                                    <div className="flex items-start gap-2"><CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" /><p>
+                                        <span className="block text-slate-400">Periode</span>
+                                        {formatDate(booking.startDate)} - {formatDate(booking.endDate)}
+                                    </p></div>
                                     <div className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" /><p><span className="block text-slate-400">Lokasi</span>{booking.locationCity || '-'}</p></div>
                                     <div className="flex items-start gap-2"><MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" /><p><span className="block text-slate-400">Kontak</span>{booking.renterPhone || '-'}</p></div>
                                 </div>

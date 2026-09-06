@@ -15,10 +15,17 @@ export default function BookingChatModal({ booking, currentUser, onClose }) {
     const [sending, setSending] = useState(false);
     const [error, setError] = useState('');
 
-    // Ref untuk menandai elemen paling bawah di kontainer pesan
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (!sending && (draft.trim() || selectedImage)) {
+                handleSend();
+            }
+        }
+    };
+
     const messagesEndRef = useRef(null);
 
-    // Fungsi otomatis scroll ke bawah
     const scrollToBottom = (behavior = 'smooth') => {
         messagesEndRef.current?.scrollIntoView({ behavior });
     };
@@ -217,6 +224,7 @@ export default function BookingChatModal({ booking, currentUser, onClose }) {
                         <Textarea
                             value={draft}
                             onChange={(e) => setDraft(e.target.value)}
+                            onKeyDown={handleKeyDown} // <- TAMBAHKAN BARIS INI
                             rows={2}
                             placeholder={`Tulis pesan untuk ${otherUserName}...`}
                             className="min-h-0 flex-1 resize-none bg-slate-50 text-xs focus:bg-white"

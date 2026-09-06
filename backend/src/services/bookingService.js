@@ -18,28 +18,26 @@ export async function checkAvailability(listingId, startDate, endDate) {
         .where(
             and(
                 eq(bookings.listingId, listingId),
-                ne(bookings.status, 'CANCELLED'),
-                ne(bookings.status, 'COMPLETED'),
+                inArray(bookings.status, ['PENDING', 'APPROVED', 'ACTIVE']),
                 lte(bookings.startDate, end),
                 gte(bookings.endDate, start)
             )
         );
 
-    const isAvailable = overlappingBookings.length < listing.totalStock;
+    const totalStock = Number(listing.totalStock || 1);
+    const isAvailable = overlappingBookings.length < totalStock;
 
     return {
         isAvailable,
         listing,
-        remainingStock: listing.totalStock - overlappingBookings.length
+        remainingStock: Math.max(0, totalStock - overlappingBookings.length)
     };
 }
 
 export async function createBookingService({ renterId, listingId, startDate, endDate, note }) {
     const { isAvailable, listing } = await checkAvailability(listingId, startDate, endDate);
 
-    if (!isAvailable) {
-        throw new Error('Stok fins tidak tersedia pada tanggal yang dipilih.');
-    }
+    const initialStatus = isAvailable ? 'PENDING' : 'WAITING_LIST';
 
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -57,7 +55,7 @@ export async function createBookingService({ renterId, listingId, startDate, end
         totalRentalPrice,
         depositAmount,
         note: note ? String(note).trim() : null,
-        status: 'PENDING'
+        status: initialStatus // Gunakan status dinamis hasil pengecekan
     }).returning();
 
     return newBooking;

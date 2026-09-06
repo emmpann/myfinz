@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
     X, ShieldCheck, MapPin, CheckCircle2,
-    Truck, Award, Calendar, ChevronDown, ChevronUp
+    Truck, Award, Calendar, ChevronDown, ChevronUp, UserRound
 } from 'lucide-react';
 import api from '../api/axios';
 
@@ -25,7 +25,7 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
 
     const handleStartDateChange = (value) => {
         setStartDate(value);
-        if (endDate && value > endDate) {
+        if (endDate && value > endDate) {zaz
             setEndDate('');
         }
         setBookingError('');
@@ -126,6 +126,7 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
     const calendarStartDay = new Date(calendarYear, calendarMonth, 1).getDay();
     const calendarDateValue = (day) => `${calendarYear}-${String(calendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const isUnavailable = (value) => unavailableDates.includes(value);
+
     const handleCalendarDateClick = (value) => {
         if (isUnavailable(value)) return;
         if (!startDate || endDate) {
@@ -138,11 +139,16 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
         }
         setBookingError('');
     };
+
     const pricePerDay = Number(item.pricePerDay || 0);
     const depositAmount = Number(item.depositAmount || 0);
     const totalPrice = pricePerDay * days;
-    const availableStock = Number(item.availableStock || 0);
-    const totalStock = Number(item.totalStock || 0);
+    const availableStock = Number(item.availableStock ?? item.totalStock ?? 1);
+    const totalStock = Number(item.totalStock || 1);
+
+    // STATUS DINAMIS DARI API (WAITING LIST / AVAILABLE)
+    const isWaitingList = item.availabilityStatus === 'WAITING LIST' || availableStock <= 0;
+    const displayStatus = isWaitingList ? 'WAITING LIST' : (item.availabilityStatus || 'AVAILABLE');
 
     return (
         <div
@@ -176,9 +182,25 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
                                 <span>{item.locationCity || 'Indonesia'}</span>
                             </div>
                             <span>•</span>
-                            <div className="flex items-center gap-1 text-emerald-600 font-medium">
+
+                            {/* BADGE STATUS TERSEDIADARI API */}
+                            <div className={`flex items-center gap-1 font-semibold ${isWaitingList ? 'text-amber-600' : 'text-emerald-600'}`}>
                                 <ShieldCheck className="w-4 h-4" />
-                                <span>Status: {item.status || 'AVAILABLE'}</span>
+                                <span>Status: {displayStatus}</span>
+                            </div>
+                        </div>
+
+                        {/* Profil Pemilik / Owner */}
+                        <div className="mt-4 flex items-center gap-3 rounded-2xl border border-blue-100 bg-blue-50/50 p-3">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-white font-bold text-xs">
+                                {(item.ownerName || item.lenderName) ? (item.ownerName || item.lenderName).charAt(0).toUpperCase() : <UserRound className="h-4 w-4" />}
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-semibold uppercase tracking-wider text-blue-600">Pemilik / Lender</p>
+                                <p className="text-xs font-semibold text-slate-900 flex items-center gap-1">
+                                    {item.ownerName || item.lenderName || 'Pemilik Fins'}
+                                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" title="Terverifikasi" />
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -236,9 +258,14 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
                                         <span className="text-2xl font-bold text-slate-900">Rp {pricePerDay.toLocaleString('id-ID')}</span>
                                         <span className="text-xs text-slate-500"> / hari</span>
                                     </div>
-                                    <div className="text-xs text-emerald-600 font-medium bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-                                        {availableStock > 0 ? 'Tersedia' : 'Habis'}
-                                    </div>
+
+                                    {/* STATUS CHIP DINAMIS
+                                    <div className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${isWaitingList
+                                        ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                        : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                        }`}>
+                                        {displayStatus}
+                                    </div> */}
                                 </div>
 
                                 <div className="space-y-3">
@@ -321,15 +348,18 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
                                     </div>
                                 ) : (
                                     <button
-                                        disabled={availableStock <= 0 || submitting}
+                                        disabled={submitting}
                                         onClick={handleBookingSubmit}
-                                        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition shadow-sm text-sm"
+                                        className={`w-full font-semibold py-3 rounded-xl transition shadow-sm text-sm text-white ${isWaitingList
+                                            ? 'bg-amber-600 hover:bg-amber-700'
+                                            : 'bg-blue-600 hover:bg-blue-700'
+                                            }`}
                                     >
                                         {submitting
                                             ? 'Mengajukan...'
-                                            : availableStock > 0
-                                                ? 'Ajukan Penyewaan'
-                                                : 'Stok Tidak Tersedia'}
+                                            : isWaitingList
+                                                ? 'Masuk Waiting List'
+                                                : 'Ajukan Penyewaan'}
                                     </button>
                                 )}
                             </div>
