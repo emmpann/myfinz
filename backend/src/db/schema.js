@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, integer, numeric, timestamp, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, integer, numeric, timestamp, pgEnum, boolean } from 'drizzle-orm/pg-core';
 
 // Enum Status
 export const bookingStatusEnum = pgEnum('booking_status', ['PENDING', 'APPROVED', 'ACTIVE', 'COMPLETED', 'CANCELLED']);
