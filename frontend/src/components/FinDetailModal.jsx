@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
     X, ShieldCheck, MapPin, CheckCircle2,
-    Truck, Award
+    Truck, Award, Calendar, ChevronDown, ChevronUp
 } from 'lucide-react';
 import api from '../api/axios';
 
@@ -14,6 +14,7 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
     const [bookingSuccess, setBookingSuccess] = useState(null);
     const [unavailableDates, setUnavailableDates] = useState([]);
     const [calendarDate, setCalendarDate] = useState(new Date());
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
     useEffect(() => {
         if (!item?.id) return;
@@ -99,7 +100,8 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
         } catch (error) {
             const message = error?.response?.data?.message || error.message || 'Gagal mengajukan penyewaan.';
             setBookingError(message);
-        } finally {
+        }
+        finally {
             setSubmitting(false);
         }
     };
@@ -244,12 +246,36 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
                                         <div><label className="block text-[11px] font-semibold text-slate-600 mb-1">Mulai Sewa</label><div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900">{startDate || 'Pilih tanggal'}</div></div>
                                         <div><label className="block text-[11px] font-semibold text-slate-600 mb-1">Selesai Sewa</label><div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900">{endDate || 'Pilih tanggal'}</div></div>
                                     </div>
-                                    <div className="rounded-xl border border-slate-200 bg-white p-3">
-                                        <div className="mb-3 flex items-center justify-between"><button type="button" onClick={() => setCalendarDate(new Date(calendarYear, calendarMonth - 1, 1))} className="rounded-lg p-1 text-slate-500 hover:bg-slate-100">‹</button><span className="text-xs font-semibold text-slate-900">{new Date(calendarYear, calendarMonth).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}</span><button type="button" onClick={() => setCalendarDate(new Date(calendarYear, calendarMonth + 1, 1))} className="rounded-lg p-1 text-slate-500 hover:bg-slate-100">›</button></div>
-                                        <div className="mb-1 grid grid-cols-7 text-center">{['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].map((day) => <span key={day} className="text-[9px] font-semibold text-slate-400">{day}</span>)}</div>
-                                        <div className="grid grid-cols-7 gap-y-1 text-center">{Array.from({ length: calendarStartDay }).map((_, index) => <span key={`empty-${index}`} />)}{Array.from({ length: calendarDays }).map((_, index) => { const day = index + 1; const value = calendarDateValue(day); const blocked = isUnavailable(value); const selected = value === startDate || value === endDate; const inRange = startDate && endDate && value > startDate && value < endDate; return <button type="button" key={value} disabled={blocked} onClick={() => handleCalendarDateClick(value)} className={`relative mx-auto flex h-7 w-7 items-center justify-center rounded-full text-[10px] ${blocked ? 'cursor-not-allowed text-slate-300 line-through decoration-red-400 decoration-2' : selected ? 'bg-blue-600 text-white' : inRange ? 'bg-blue-100 text-blue-700' : 'text-slate-700 hover:bg-slate-100'}`}>{day}</button>; })}</div>
-                                        <p className="mt-3 text-[10px] text-slate-400"><span className="text-red-400 line-through">Tanggal dicoret</span> sedang dipesan dan tidak dapat dipilih.</p>
-                                    </div>
+
+                                    {/* Tombol Toggle Collapse Kalender */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                                        className="w-full flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition text-left shadow-sm"
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <Calendar className="w-4 h-4 text-blue-600" />
+                                            <span className="text-xs font-medium text-slate-700">
+                                                {isCalendarOpen ? 'Sembunyikan Kalender' : 'Buka / Pilih Tanggal Kalender'}
+                                            </span>
+                                        </div>
+                                        {isCalendarOpen ? (
+                                            <ChevronUp className="w-4 h-4 text-slate-400" />
+                                        ) : (
+                                            <ChevronDown className="w-4 h-4 text-slate-400" />
+                                        )}
+                                    </button>
+
+                                    {/* Komponen Kalender Tersembunyi */}
+                                    {isCalendarOpen && (
+                                        <div className="rounded-xl border border-slate-200 bg-white p-3 transition-all">
+                                            <div className="mb-3 flex items-center justify-between"><button type="button" onClick={() => setCalendarDate(new Date(calendarYear, calendarMonth - 1, 1))} className="rounded-lg p-1 text-slate-500 hover:bg-slate-100">‹</button><span className="text-xs font-semibold text-slate-900">{new Date(calendarYear, calendarMonth).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}</span><button type="button" onClick={() => setCalendarDate(new Date(calendarYear, calendarMonth + 1, 1))} className="rounded-lg p-1 text-slate-500 hover:bg-slate-100">›</button></div>
+                                            <div className="mb-1 grid grid-cols-7 text-center">{['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].map((day) => <span key={day} className="text-[9px] font-semibold text-slate-400">{day}</span>)}</div>
+                                            <div className="grid grid-cols-7 gap-y-1 text-center">{Array.from({ length: calendarStartDay }).map((_, index) => <span key={`empty-${index}`} />)}{Array.from({ length: calendarDays }).map((_, index) => { const day = index + 1; const value = calendarDateValue(day); const blocked = isUnavailable(value); const selected = value === startDate || value === endDate; const inRange = startDate && endDate && value > startDate && value < endDate; return <button type="button" key={value} disabled={blocked} onClick={() => handleCalendarDateClick(value)} className={`relative mx-auto flex h-7 w-7 items-center justify-center rounded-full text-[10px] ${blocked ? 'cursor-not-allowed text-slate-300 line-through decoration-red-400 decoration-2' : selected ? 'bg-blue-600 text-white' : inRange ? 'bg-blue-100 text-blue-700' : 'text-slate-700 hover:bg-slate-100'}`}>{day}</button>; })}</div>
+                                            <p className="mt-3 text-[10px] text-slate-400"><span className="text-red-400 line-through">Tanggal dicoret</span> sedang dipesan dan tidak dapat dipilih.</p>
+                                        </div>
+                                    )}
+
                                     <div>
                                         <label className="block text-[11px] font-semibold text-slate-600 mb-1">Catatan untuk pemilik (opsional)</label>
                                         <textarea
