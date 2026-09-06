@@ -1,0 +1,48 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@theme {
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F7FAFC;
+  --color-bg-tertiary: #EAF3FF;
+  --color-text-primary: #111827;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #64748B;
+  --color-accent: #0F6FFF;
+  --color-accent-light: #EAF3FF;
+  --color-accent-hover: #0B5ED7;
+  --color-success: #0F9F6E;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-border: #E2E8F0;
+  --color-border-light: #F1F5F9;
+  --font-sans: Inter, sans-serif;
+  --font-display: Space Grotesk, sans-serif;
+  --font-mono: IBM Plex Mono, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 130px, #ffffff 100%);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
