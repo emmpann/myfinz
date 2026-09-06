@@ -149,23 +149,6 @@ export default function ListingFormDialog({
                     </div>
 
                     <div>
-                        <label className="block text-xs text-slate-600 mb-1">Deposit</label>
-                        <input
-                            type="text"
-                            inputMode="numeric"
-                            value={listingForm.depositAmount}
-                            onChange={(event) =>
-                                setListingForm((prev) => ({
-                                    ...prev,
-                                    depositAmount: formatNumberInput(event.target.value),
-                                }))
-                            }
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900"
-                            required
-                        />
-                    </div>
-
-                    <div>
                         <label className="block text-xs text-slate-600 mb-1">Jumlah stok</label>
                         <input
                             type="text"
