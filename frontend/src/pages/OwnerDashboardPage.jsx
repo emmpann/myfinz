@@ -41,7 +41,7 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
   const [filterEndDate, setFilterEndDate] = useState('');
   const [filterRenterName, setFilterRenterName] = useState('');
 
-  const sizes = ['Semua Ukuran', '37-38', '39-40', '41-42', '43-44', '45-46'];
+  const sizes = ['Semua Ukuran', "31-32", "33-34", "35-36", '37-38', '39-40', '41-42', '43-44', '45-46'];
   const categories = ['All', 'Freediving', 'Scuba', 'Spearfishing', 'Carbon', 'Fiberglass'];
 
   useEffect(() => {
