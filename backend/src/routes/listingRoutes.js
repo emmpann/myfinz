@@ -6,6 +6,7 @@ import {
     updateListingService,
     deleteListingService,
     getListingByIdService,
+    getListingAvailabilityService,
 } from '../services/listingService.js';
 import { checkAvailability } from '../services/bookingService.js';
 
@@ -24,6 +25,16 @@ router.get('/owner/:lenderId', async (req, res) => {
     try {
         const listings = await getListingsByLenderService(req.params.lenderId);
         res.json({ success: true, data: listings });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
+router.get('/:id/unavailable-dates', async (req, res) => {
+    try {
+        const listing = await getListingAvailabilityService(req.params.id);
+        if (!listing) return res.status(404).json({ success: false, message: 'Listing tidak ditemukan' });
+        res.json({ success: true, data: { availabilityStatus: listing.availabilityStatus, unavailableDates: listing.unavailableDates } });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }

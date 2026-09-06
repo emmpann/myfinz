@@ -1033,36 +1033,50 @@ export default function App() {
               {ownerListings.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                   {ownerListings.map((item) => (
-                    <div key={item.id} className="border border-slate-200 rounded-2xl p-4 bg-slate-50">
-                      <div className="flex items-center justify-between gap-3">
-                        <div>
-                          <p className="text-slate-900 font-semibold">{item.title}</p>
-                          <p className="text-sm text-slate-500">{item.locationCity}</p>
+                    <div key={item.id} className="rounded-xl border border-slate-200 bg-white p-4 transition hover:border-blue-200 hover:shadow-sm">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="truncate text-base font-semibold text-slate-900">{item.title}</p>
+                          <p className="mt-1 flex items-center gap-1 text-xs text-slate-500">
+                            <span className="text-blue-600">●</span>{item.locationCity}
+                          </p>
                         </div>
-                        <span className="px-2 py-1 rounded-full text-xs bg-blue-50 text-blue-700 border border-blue-200">
+                        <span className="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-[10px] font-semibold text-emerald-700">
                           {item.status}
                         </span>
                       </div>
 
-                      <div className="mt-4 space-y-2 text-sm text-slate-700">
-                        <p>Kategori: {item.category}</p>
-                        <p>Ukuran: {item.size}</p>
-                        <p>Stok: {item.availableStock ?? item.totalStock} / {item.totalStock}</p>
-                        <p>Harga: Rp {Number(item.pricePerDay || 0).toLocaleString('id-ID')}/hari</p>
+                      <div className="mt-4 grid grid-cols-2 gap-3 border-y border-slate-100 py-3 text-xs">
+                        <div>
+                          <p className="text-slate-400">Kategori</p>
+                          <p className="mt-1 font-medium text-slate-700">{item.category || '-'}</p>
+                        </div>
+                        <div>
+                          <p className="text-slate-400">Ukuran</p>
+                          <p className="mt-1 font-medium text-slate-700">{item.size || '-'}</p>
+                        </div>
+                        <div>
+                          <p className="text-slate-400">Stok tersedia</p>
+                          <p className="mt-1 font-medium text-slate-700">{item.availableStock ?? item.totalStock} / {item.totalStock}</p>
+                        </div>
+                        <div>
+                          <p className="text-slate-400">Harga per hari</p>
+                          <p className="mt-1 font-semibold text-blue-700">Rp {Number(item.pricePerDay || 0).toLocaleString('id-ID')}</p>
+                        </div>
                       </div>
 
-                      <div className="mt-4 flex gap-2">
+                      <div className="mt-3 flex gap-2">
                         <button
                           type="button"
                           onClick={() => handleEditListing(item)}
-                          className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold py-2 rounded-lg border border-blue-200"
+                          className="flex-1 rounded-lg border border-blue-200 bg-blue-50 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-100"
                         >
                           Edit
                         </button>
                         <button
                           type="button"
                           onClick={() => handleDeleteListing(item.id)}
-                          className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold py-2 rounded-lg border border-red-200"
+                          className="flex-1 rounded-lg border border-red-200 bg-white py-2 text-xs font-semibold text-red-600 hover:bg-red-50"
                         >
                           Hapus
                         </button>

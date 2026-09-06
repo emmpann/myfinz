@@ -21,8 +21,8 @@ export default function FinCard({ item, onClick }) {
                         Tidak Ada Gambar
                     </div>
                 )}
-                <Badge variant="success" className="absolute left-2 top-2 gap-1 bg-white/90 px-1.5 py-0.5 text-[9px] shadow-sm sm:left-3 sm:top-3 sm:text-[10px]">
-                    <ShieldCheck className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> {item.status}
+                <Badge variant={item.availabilityStatus === 'WAITING LIST' ? 'secondary' : 'success'} className="absolute left-2 top-2 gap-1 bg-white/90 px-1.5 py-0.5 text-[9px] shadow-sm sm:left-3 sm:top-3 sm:text-[10px]">
+                    <ShieldCheck className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> {item.availabilityStatus || item.status}
                 </Badge>
             </div>
 
