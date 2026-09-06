@@ -158,11 +158,6 @@ export default function TransactionList({
                                     <div className="flex items-start gap-2"><MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" /><p><span className="block text-slate-400">Kontak</span>{booking.renterPhone || '-'}</p></div>
                                 </div>
 
-                                <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-xs">
-                                    <span className="text-slate-500">Deposit</span>
-                                    <span className="font-medium text-slate-700">Rp {Number(booking.depositAmount || 0).toLocaleString('id-ID')}</span>
-                                </div>
-
                                 {booking.note && (
                                     <div className="mt-3 rounded-lg bg-blue-50 px-3 py-2 text-xs text-slate-700">
                                         <span className="font-medium text-blue-700">Catatan penyewa:</span> {booking.note}

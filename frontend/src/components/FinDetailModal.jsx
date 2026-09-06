@@ -25,7 +25,8 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
 
     const handleStartDateChange = (value) => {
         setStartDate(value);
-        if (endDate && value > endDate) {zaz
+        if (endDate && value > endDate) {
+            zaz
             setEndDate('');
         }
         setBookingError('');
@@ -141,7 +142,6 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
     };
 
     const pricePerDay = Number(item.pricePerDay || 0);
-    const depositAmount = Number(item.depositAmount || 0);
     const totalPrice = pricePerDay * days;
     const availableStock = Number(item.availableStock ?? item.totalStock ?? 1);
     const totalStock = Number(item.totalStock || 1);
@@ -320,13 +320,9 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
                                         <span>Sewa ({days} hari)</span>
                                         <span>Rp {totalPrice.toLocaleString('id-ID')}</span>
                                     </div>
-                                    <div className="flex justify-between text-slate-600">
-                                        <span>Deposit</span>
-                                        <span>Rp {depositAmount.toLocaleString('id-ID')}</span>
-                                    </div>
                                     <div className="flex justify-between font-bold text-slate-900 text-sm pt-2 border-t border-slate-200">
                                         <span>Total Transaksi</span>
-                                        <span className="text-blue-600">Rp {(totalPrice + depositAmount).toLocaleString('id-ID')}</span>
+                                        <span className="text-blue-600">Rp {totalPrice.toLocaleString('id-ID')}</span>
                                     </div>
                                 </div>
 

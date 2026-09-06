@@ -195,7 +195,7 @@ export default function OrdersPage({ currentUser, onBackToMarketplace, setChatBo
                                 </div>
 
                                 <div className="border-t border-slate-100 bg-slate-50/70 px-5 py-4">
-                                    <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
+                                    <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
                                         <div>
                                             <p className="text-xs text-slate-400">Periode sewa</p>
                                             <p className="mt-1 font-medium text-slate-700">{formatDate(booking.startDate)} - {formatDate(booking.endDate)}</p>
@@ -203,10 +203,6 @@ export default function OrdersPage({ currentUser, onBackToMarketplace, setChatBo
                                         <div>
                                             <p className="text-xs text-slate-400">Total sewa</p>
                                             <p className="mt-1 font-medium text-slate-700">Rp {Number(booking.totalRentalPrice || 0).toLocaleString('id-ID')}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-slate-400">Deposit</p>
-                                            <p className="mt-1 font-medium text-slate-700">Rp {Number(booking.depositAmount || 0).toLocaleString('id-ID')}</p>
                                         </div>
                                         <div>
                                             <p className="text-xs text-slate-400">Booking ID</p>

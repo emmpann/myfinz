@@ -44,7 +44,6 @@ export async function createBookingService({ renterId, listingId, startDate, end
     const diffTime = Math.abs(end - start);
     const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
     const totalRentalPrice = (parseFloat(listing.pricePerDay) * totalDays).toFixed(2);
-    const depositAmount = parseFloat(listing.depositAmount).toFixed(2);
 
     const [newBooking] = await db.insert(bookings).values({
         renterId,
@@ -53,7 +52,6 @@ export async function createBookingService({ renterId, listingId, startDate, end
         endDate: end,
         totalDays,
         totalRentalPrice,
-        depositAmount,
         note: note ? String(note).trim() : null,
         status: initialStatus // Gunakan status dinamis hasil pengecekan
     }).returning();
@@ -81,7 +79,6 @@ export async function getBookingsByRenterService(renterId) {
             endDate: bookings.endDate,
             totalDays: bookings.totalDays,
             totalRentalPrice: bookings.totalRentalPrice,
-            depositAmount: bookings.depositAmount,
             note: bookings.note,
             status: bookings.status,
             createdAt: bookings.createdAt,
@@ -122,7 +119,6 @@ export async function getBookingsByOwnerService(lenderId) {
             endDate: bookings.endDate,
             totalDays: bookings.totalDays,
             totalRentalPrice: bookings.totalRentalPrice,
-            depositAmount: bookings.depositAmount,
             note: bookings.note,
             status: bookings.status,
             createdAt: bookings.createdAt,

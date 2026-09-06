@@ -43,7 +43,6 @@ async function addAvailabilityData(listing) {
     };
 }
 
-// Sesuaikan dengan kolom di database
 const listingFields = {
     id: listings.id,
     lenderId: listings.lenderId,
@@ -53,7 +52,6 @@ const listingFields = {
     footPocketType: listings.footPocketType,
     size: listings.size,
     pricePerDay: listings.pricePerDay,
-    depositAmount: listings.depositAmount,
     locationCity: listings.locationCity,
     totalStock: listings.totalStock,
     availableStock: listings.availableStock,   // ← kolom baru
@@ -70,8 +68,8 @@ export async function getAllListingsService(filters = {}) {
     if (category) conditions.push(eq(listings.category, category));
     if (size) conditions.push(eq(listings.size, size));
     if (locationCity) conditions.push(ilike(listings.locationCity, `%${locationCity.trim()}%`));
-    if (footPocketType) conditions.push(eq(listings.footPocketType, footPocketType));  // ← filter baru
-    if (status) conditions.push(eq(listings.status, status));                   // ← filter baru
+    if (footPocketType) conditions.push(eq(listings.footPocketType, footPocketType));
+    if (status) conditions.push(eq(listings.status, status));
 
     const result = await db
         .select(listingFields)
