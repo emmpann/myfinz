@@ -336,49 +336,74 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 {ownerListings.map((item) => (
                   <div key={item.id} className="rounded-xl border border-slate-200 bg-white p-4 transition hover:border-blue-200 hover:shadow-sm">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="truncate text-base font-semibold text-slate-900">{item.title}</p>
+
+                    {/* BAGIAN UTAMA LAYOUT GAMBAR PERSEGI & INFO LISTING */}
+                    <div className="flex items-start gap-3">
+                      {/* Gambar Fin Persegi */}
+                      <div className="aspect-square w-20 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-100 sm:w-24">
+                        {item.imageUrl ? (
+                          <img
+                            src={item.imageUrl}
+                            alt={item.title || 'Fins'}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-[10px] text-slate-400">
+                            Tidak ada foto
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Info Judul & Status (Responsive Layout) */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                          <h3 className="truncate text-base font-bold text-slate-900" title={item.title}>
+                            {item.title}
+                          </h3>
+                          <span className="w-fit shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                            {item.status || 'AVAILABLE'}
+                          </span>
+                        </div>
+
                         <p className="mt-1 flex items-center gap-1 text-xs text-slate-500">
-                          <span className="text-blue-600">●</span>{item.locationCity}
+                          <span className="text-blue-600">●</span>{item.locationCity || '-'}
                         </p>
                       </div>
-                      <span className="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-[10px] font-semibold text-emerald-700">
-                        {item.status}
-                      </span>
                     </div>
 
+                    {/* DETAIL SPESIFIKASI & HARGA */}
                     <div className="mt-4 grid grid-cols-2 gap-3 border-y border-slate-100 py-3 text-xs">
                       <div>
                         <p className="text-slate-400">Kategori</p>
-                        <p className="mt-1 font-medium text-slate-700">{item.category || '-'}</p>
+                        <p className="mt-0.5 font-medium text-slate-700">{item.category || '-'}</p>
                       </div>
                       <div>
                         <p className="text-slate-400">Ukuran</p>
-                        <p className="mt-1 font-medium text-slate-700">{item.size || '-'}</p>
+                        <p className="mt-0.5 font-medium text-slate-700">{item.size || '-'}</p>
                       </div>
                       <div>
                         <p className="text-slate-400">Stok tersedia</p>
-                        <p className="mt-1 font-medium text-slate-700">{item.availableStock ?? item.totalStock} / {item.totalStock}</p>
+                        <p className="mt-0.5 font-medium text-slate-700">{item.availableStock ?? item.totalStock} / {item.totalStock}</p>
                       </div>
                       <div>
                         <p className="text-slate-400">Harga per hari</p>
-                        <p className="mt-1 font-semibold text-blue-700">Rp {Number(item.pricePerDay || 0).toLocaleString('id-ID')}</p>
+                        <p className="mt-0.5 font-semibold text-blue-700">Rp {Number(item.pricePerDay || 0).toLocaleString('id-ID')}</p>
                       </div>
                     </div>
 
+                    {/* TOMBOL AKSI EDIT / HAPUS */}
                     <div className="mt-3 flex gap-2">
                       <button
                         type="button"
                         onClick={() => handleEditListing(item)}
-                        className="flex-1 rounded-lg border border-blue-200 bg-blue-50 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-100"
+                        className="flex-1 rounded-lg border border-blue-200 bg-blue-50 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-100 transition"
                       >
                         Edit
                       </button>
                       <button
                         type="button"
                         onClick={() => handleDeleteListing(item.id)}
-                        className="flex-1 rounded-lg border border-red-200 bg-white py-2 text-xs font-semibold text-red-600 hover:bg-red-50"
+                        className="flex-1 rounded-lg border border-red-200 bg-white py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition"
                       >
                         Hapus
                       </button>
