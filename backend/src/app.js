@@ -55,6 +55,6 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/chat', chatRoutes);
 
 const PORT = process.env.PORT || 5000;
-httpServer.listen(PORT, () => {
-    console.log(`🚀 Server backend berjalan di http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server backend berjalan di port ${PORT}`);
 });
