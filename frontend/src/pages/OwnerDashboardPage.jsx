@@ -316,6 +316,7 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
             setChatBooking={setChatBooking}
             handleUpdateBookingStatus={handleUpdateBookingStatus}
             updatingBookingId={updatingBookingId}
+            currentUser={currentUser}
           />
         </TabsContent>
 
