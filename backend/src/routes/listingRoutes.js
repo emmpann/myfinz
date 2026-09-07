@@ -9,7 +9,7 @@ import {
     deleteListing,
     checkListingAvailability
 } from '../controllers/listingController.js';
-import { authenticateJWT } from '../middleware/authMiddleware.js';
+import { authenticateJWT } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 

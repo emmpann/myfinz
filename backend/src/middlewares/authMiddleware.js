@@ -14,7 +14,7 @@ export function authenticateJWT(req, res, next) {
 
     try {
         const decoded = verifyToken(token);
-        req.user = decoded; // Menyimpan data payload user { id, email, role } di req.user
+        req.user = decoded;
         next();
     } catch (error) {
         return res.status(403).json({
