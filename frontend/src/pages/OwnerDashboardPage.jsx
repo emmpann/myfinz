@@ -11,7 +11,6 @@ const defaultListingForm = {
   footPocketType: '',
   size: '',
   pricePerDay: '',
-  depositAmount: '',
   locationCity: '',
   totalStock: '',
 };
@@ -54,8 +53,8 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
     if (!currentUser) return;
     try {
       const [listingsRes, bookingsRes] = await Promise.all([
-        api.get(`/listings/owner/${currentUser.id}`),
-        api.get(`/bookings/owner/${currentUser.id}`),
+        api.get('/listings/owner'),
+        api.get('/bookings/owner'),
       ]);
 
       if (listingsRes.data.success) {
@@ -115,21 +114,25 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
           headers: { 'Content-Type': 'multipart/form-data' },
         });
 
-        if (!uploadResponse.data?.success || !uploadResponse.data?.imageUrl) {
+        const imageUrlFromRes = uploadResponse.data?.data?.imageUrl || uploadResponse.data?.imageUrl;
+
+        if (!uploadResponse.data?.success || !imageUrlFromRes) {
           throw new Error(uploadResponse.data?.message || 'Upload gambar gagal.');
         }
 
-        uploadedImageUrl = uploadResponse.data.imageUrl;
+        uploadedImageUrl = imageUrlFromRes;
       }
 
       const payload = {
-        ...listingForm,
-        lenderId: currentUser.id,
+        title: listingForm.title,
+        category: listingForm.category,
+        footPocketType: listingForm.footPocketType,
+        size: listingForm.size,
+        locationCity: listingForm.locationCity,
         pricePerDay: parseNumberInput(listingForm.pricePerDay).toFixed(2),
-        depositAmount: parseNumberInput(listingForm.depositAmount).toFixed(2),
         totalStock: parseNumberInput(listingForm.totalStock),
         availableStock: parseNumberInput(listingForm.totalStock),
-        imageUrl: uploadedImageUrl || listingForm.imageUrl,
+        imageUrl: uploadedImageUrl || imagePreview || null,
       };
 
       const response = await api.post('/listings', payload);
@@ -157,7 +160,6 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
       footPocketType: item.footPocketType || 'Standard',
       size: item.size || '37-38',
       pricePerDay: formatNumberInput(item.pricePerDay),
-      depositAmount: formatNumberInput(item.depositAmount),
       locationCity: item.locationCity || 'Jakarta',
       totalStock: formatNumberInput(item.totalStock),
     });
@@ -185,18 +187,22 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
           headers: { 'Content-Type': 'multipart/form-data' },
         });
 
-        if (!uploadResponse.data?.success || !uploadResponse.data?.imageUrl) {
+        const imageUrlFromRes = uploadResponse.data?.data?.imageUrl || uploadResponse.data?.imageUrl;
+
+        if (!uploadResponse.data?.success || !imageUrlFromRes) {
           throw new Error(uploadResponse.data?.message || 'Upload gambar gagal.');
         }
 
-        uploadedImageUrl = uploadResponse.data.imageUrl;
+        uploadedImageUrl = imageUrlFromRes;
       }
 
       const payload = {
-        ...listingForm,
-        lenderId: currentUser.id,
+        title: listingForm.title,
+        category: listingForm.category,
+        footPocketType: listingForm.footPocketType,
+        size: listingForm.size,
+        locationCity: listingForm.locationCity,
         pricePerDay: parseNumberInput(listingForm.pricePerDay).toFixed(2),
-        depositAmount: parseNumberInput(listingForm.depositAmount).toFixed(2),
         totalStock: parseNumberInput(listingForm.totalStock),
         availableStock: parseNumberInput(listingForm.totalStock),
         imageUrl: uploadedImageUrl || imagePreview || null,
@@ -336,10 +342,7 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 {ownerListings.map((item) => (
                   <div key={item.id} className="rounded-xl border border-slate-200 bg-white p-4 transition hover:border-blue-200 hover:shadow-sm">
-
-                    {/* BAGIAN UTAMA LAYOUT GAMBAR PERSEGI & INFO LISTING */}
                     <div className="flex items-start gap-3">
-                      {/* Gambar Fin Persegi */}
                       <div className="aspect-square w-20 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-100 sm:w-24">
                         {item.imageUrl ? (
                           <img
@@ -354,15 +357,12 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
                         )}
                       </div>
 
-                      {/* Info Judul & Status */}
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-col gap-1.5 sm:flex-row sm:items-start sm:justify-between">
-                          {/* Judul Multiline (Bisa sampai 2 baris) */}
                           <h3 className="line-clamp-2 text-base font-bold text-slate-900 leading-snug break-words" title={item.title}>
                             {item.title}
                           </h3>
 
-                          {/* Badge Status */}
                           <span className="w-fit shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
                             {item.status || 'AVAILABLE'}
                           </span>
@@ -374,7 +374,6 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
                       </div>
                     </div>
 
-                    {/* DETAIL SPESIFIKASI & HARGA */}
                     <div className="mt-4 grid grid-cols-2 gap-3 border-y border-slate-100 py-3 text-xs">
                       <div>
                         <p className="text-slate-400">Kategori</p>
@@ -394,7 +393,6 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
                       </div>
                     </div>
 
-                    {/* TOMBOL AKSI EDIT / HAPUS */}
                     <div className="mt-3 flex gap-2">
                       <button
                         type="button"
@@ -423,7 +421,6 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
         </TabsContent>
       </Tabs>
 
-      {/* Komponen Form Dialog */}
       <ListingFormDialog
         open={listingFormOpen}
         onOpenChange={setListingFormOpen}

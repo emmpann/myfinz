@@ -57,7 +57,7 @@ export default function ListingFormDialog({
                             onChange={(event) =>
                                 setListingForm((prev) => ({ ...prev, title: event.target.value }))
                             }
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-blue-500"
                             placeholder="Contoh: Fins 42 Carbon Pro"
                             required
                         />
@@ -70,7 +70,7 @@ export default function ListingFormDialog({
                             onChange={(event) =>
                                 setListingForm((prev) => ({ ...prev, category: event.target.value }))
                             }
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-blue-500"
                             required
                         >
                             <option value="" disabled>Pilih kategori</option>
@@ -91,7 +91,7 @@ export default function ListingFormDialog({
                             onChange={(event) =>
                                 setListingForm((prev) => ({ ...prev, footPocketType: event.target.value }))
                             }
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-blue-500"
                             placeholder="Standard"
                             required
                         />
@@ -104,7 +104,7 @@ export default function ListingFormDialog({
                             onChange={(event) =>
                                 setListingForm((prev) => ({ ...prev, size: event.target.value }))
                             }
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-blue-500"
                             required
                         >
                             <option value="" disabled>Pilih ukuran</option>
@@ -125,14 +125,14 @@ export default function ListingFormDialog({
                             onChange={(event) =>
                                 setListingForm((prev) => ({ ...prev, locationCity: event.target.value }))
                             }
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-blue-500"
                             placeholder="Jakarta"
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-xs text-slate-600 mb-1">Harga / hari</label>
+                        <label className="block text-xs text-slate-600 mb-1">Harga / hari (Rp)</label>
                         <input
                             type="text"
                             inputMode="numeric"
@@ -143,7 +143,8 @@ export default function ListingFormDialog({
                                     pricePerDay: formatNumberInput(event.target.value),
                                 }))
                             }
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                            placeholder="150000"
                             required
                         />
                     </div>
@@ -161,7 +162,8 @@ export default function ListingFormDialog({
                                     totalStock: formatNumberInput(event.target.value),
                                 }))
                             }
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-blue-500"
+                            placeholder="1"
                             required
                         />
                     </div>
@@ -178,7 +180,7 @@ export default function ListingFormDialog({
                                     setImagePreview(URL.createObjectURL(file));
                                 }
                             }}
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 file:mr-3 file:rounded file:border-0 file:bg-blue-600 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-600 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-white hover:file:bg-blue-700"
                         />
                         {imagePreview && (
                             <div className="mt-3 overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
@@ -197,7 +199,7 @@ export default function ListingFormDialog({
                         <button
                             type="submit"
                             disabled={listingSubmitting}
-                            className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-semibold py-3 rounded-xl"
+                            className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-semibold py-3 rounded-xl transition"
                         >
                             {listingSubmitting
                                 ? 'Menyimpan...'

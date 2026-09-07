@@ -21,6 +21,7 @@ async function addAvailabilityData(listing) {
     const today = new Date();
     const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+
     const bookedToday = activeBookings.filter(({ startDate, endDate }) =>
         new Date(startDate) < todayEnd && new Date(endDate) > todayStart
     ).length;
@@ -54,9 +55,9 @@ const listingFields = {
     pricePerDay: listings.pricePerDay,
     locationCity: listings.locationCity,
     totalStock: listings.totalStock,
-    availableStock: listings.availableStock,   // ← kolom baru
-    status: listings.status,           // ← kolom baru
-    nextAvailableDate: listings.nextAvailableDate, // ← kolom baru
+    availableStock: listings.availableStock,
+    status: listings.status,
+    nextAvailableDate: listings.nextAvailableDate,
     imageUrl: listings.imageUrl,
     createdAt: listings.createdAt,
 };
@@ -65,8 +66,8 @@ export async function getAllListingsService(filters = {}) {
     const { category, size, locationCity, footPocketType, status } = filters;
     const conditions = [];
 
-    if (category) conditions.push(eq(listings.category, category));
-    if (size) conditions.push(eq(listings.size, size));
+    if (category && category !== 'All') conditions.push(eq(listings.category, category));
+    if (size && size !== 'Semua Ukuran') conditions.push(eq(listings.size, size));
     if (locationCity) conditions.push(ilike(listings.locationCity, `%${locationCity.trim()}%`));
     if (footPocketType) conditions.push(eq(listings.footPocketType, footPocketType));
     if (status) conditions.push(eq(listings.status, status));
@@ -110,14 +111,22 @@ export async function getListingByIdService(id) {
 }
 
 export async function createListingService(data) {
-    const [newListing] = await db.insert(listings).values(data).returning();
+    const payload = {
+        ...data,
+        pricePerDay: String(data.pricePerDay || '0.00'),
+    };
+
+    const [newListing] = await db.insert(listings).values(payload).returning();
     return newListing;
 }
 
 export async function updateListingService(id, data) {
+    const payload = { ...data };
+    if (payload.pricePerDay !== undefined) payload.pricePerDay = String(payload.pricePerDay);
+
     const [updatedListing] = await db
         .update(listings)
-        .set(data)
+        .set(payload)
         .where(eq(listings.id, id))
         .returning();
 

@@ -15,6 +15,12 @@ export default function BookingChatModal({ booking, currentUser, onClose }) {
     const [sending, setSending] = useState(false);
     const [error, setError] = useState('');
 
+    const messagesEndRef = useRef(null);
+
+    const scrollToBottom = (behavior = 'smooth') => {
+        messagesEndRef.current?.scrollIntoView({ behavior });
+    };
+
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -22,12 +28,6 @@ export default function BookingChatModal({ booking, currentUser, onClose }) {
                 handleSend();
             }
         }
-    };
-
-    const messagesEndRef = useRef(null);
-
-    const scrollToBottom = (behavior = 'smooth') => {
-        messagesEndRef.current?.scrollIntoView({ behavior });
     };
 
     const otherUserName = useMemo(() => {
@@ -60,6 +60,7 @@ export default function BookingChatModal({ booking, currentUser, onClose }) {
     useEffect(() => {
         loadMessages(true);
 
+        // Inisialisasi Socket.IO
         const socket = io();
         socket.emit('join-booking', booking?.id);
         socket.on('booking:message', (message) => {
@@ -72,10 +73,9 @@ export default function BookingChatModal({ booking, currentUser, onClose }) {
         };
     }, [booking?.id]);
 
-    // Triggers auto-scroll setiap kali array messages diperbarui
     useEffect(() => {
         if (messages.length > 0) {
-            scrollToBottom('auto'); // Gunakan 'auto' agar langsung ke bawah saat pertama kali buka, tanpa animasi lambat
+            scrollToBottom('auto');
         }
     }, [messages]);
 
@@ -94,15 +94,17 @@ export default function BookingChatModal({ booking, currentUser, onClose }) {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
 
-                if (!uploadResponse.data?.success || !uploadResponse.data?.imageUrl) {
+                const imageUrlFromRes = uploadResponse.data?.data?.imageUrl || uploadResponse.data?.imageUrl;
+
+                if (!uploadResponse.data?.success || !imageUrlFromRes) {
                     throw new Error(uploadResponse.data?.message || 'Upload gambar gagal.');
                 }
-                imageUrl = uploadResponse.data.imageUrl;
+                imageUrl = imageUrlFromRes;
             }
 
+            // Hapus senderId, backend membacanya dari JWT token
             const response = await api.post(`/chat/booking/${booking.id}/message`, {
-                senderId: currentUser.id,
-                content: draft.trim() || 'Gambar pembayaran',
+                content: draft.trim() || 'Gambar dikirim',
                 imageUrl,
             });
 
@@ -124,7 +126,7 @@ export default function BookingChatModal({ booking, currentUser, onClose }) {
     if (!booking) return null;
 
     return (
-        <div className="fixed inset-0 z-70 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="w-full max-w-lg bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
 
                 {/* HEADER CHAT BOX */}
@@ -183,8 +185,6 @@ export default function BookingChatModal({ booking, currentUser, onClose }) {
                                     </div>
                                 );
                             })}
-
-                            {/* Target elemen paling bawah untuk auto scroll */}
                             <div ref={messagesEndRef} />
                         </div>
                     )}
@@ -224,7 +224,7 @@ export default function BookingChatModal({ booking, currentUser, onClose }) {
                         <Textarea
                             value={draft}
                             onChange={(e) => setDraft(e.target.value)}
-                            onKeyDown={handleKeyDown} // <- TAMBAHKAN BARIS INI
+                            onKeyDown={handleKeyDown}
                             rows={2}
                             placeholder={`Tulis pesan untuk ${otherUserName}...`}
                             className="min-h-0 flex-1 resize-none bg-slate-50 text-xs focus:bg-white"

@@ -10,7 +10,6 @@ import 'dotenv/config';
 import userRoutes from './routes/userRoutes.js';
 import listingRoutes from './routes/listingRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
-import waitingListRoutes from './routes/waitingListRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
@@ -49,7 +48,6 @@ app.get('/', (req, res) => res.json({ message: 'Backend MyFinz API siap digunaka
 app.use('/api/users', userRoutes);
 app.use('/api/listings', listingRoutes);
 app.use('/api/bookings', bookingRoutes);
-app.use('/api/waiting-lists', waitingListRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/chat', chatRoutes);

@@ -1,6 +1,6 @@
 import { db } from '../db/index.js';
 import { bookings, listings, users } from '../db/schema.js';
-import { eq, and, gte, lte, ne, inArray } from 'drizzle-orm';
+import { eq, and, gte, lte, inArray } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
 const ownerUser = alias(users, 'owner_user');
@@ -53,7 +53,7 @@ export async function createBookingService({ renterId, listingId, startDate, end
         totalDays,
         totalRentalPrice,
         note: note ? String(note).trim() : null,
-        status: initialStatus // Gunakan status dinamis hasil pengecekan
+        status: initialStatus
     }).returning();
 
     return newBooking;

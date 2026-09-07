@@ -22,12 +22,12 @@ export default function TransactionList({
 
     // Fetch data unread count secara berkala (polling setiap 5 detik)
     useEffect(() => {
-        const userId = currentUser?.id || localStorage.getItem('myfinz_demo_user_id');
-        if (!userId) return;
+        if (!currentUser) return;
 
         const fetchUnreadCounts = async () => {
             try {
-                const response = await api.get(`/chat/unread/${userId}`);
+                // Rute bersih menggunakan JWT Token
+                const response = await api.get('/chat/unread');
                 if (response.data?.success) {
                     setUnreadMap(response.data.data?.unreadPerBooking || {});
                 }
@@ -55,13 +55,12 @@ export default function TransactionList({
 
     // Handler saat tombol Chat penyewa diklik
     const handleOpenChat = async (booking) => {
-        const userId = currentUser?.id || localStorage.getItem('myfinz_demo_user_id');
-
         setChatBooking(booking);
 
-        if (userId && booking?.id) {
+        if (booking?.id) {
             try {
-                const response = await api.patch(`/chat/booking/${booking.id}/read`, { userId });
+                // Tidak perlu lagi mengirim body { userId }, backend membacanya dari JWT
+                const response = await api.patch(`/chat/booking/${booking.id}/read`);
 
                 if (response.data?.success) {
                     setUnreadMap((prevMap) => ({
@@ -131,8 +130,6 @@ export default function TransactionList({
                         return (
                             <div key={booking.id} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-blue-200 hover:shadow-md">
                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start border-b border-slate-100 pb-3">
-
-                                    {/* GAMBAR FINS BERBENTUK PERSEGI (ASPECT-SQUARE) */}
                                     <div className="aspect-square w-28 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-100 sm:w-32">
                                         {booking.imageUrl ? (
                                             <img
@@ -147,7 +144,6 @@ export default function TransactionList({
                                         )}
                                     </div>
 
-                                    {/* DESKRIPSI UTAMA */}
                                     <div className="min-w-0 flex-1">
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="min-w-0">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import CategoryFilter from '../components/CategoryFilter';
 import FinCard from '../components/FinCard';
 import api from '../api/axios';
@@ -34,7 +34,7 @@ export default function MarketplacePage({ currentUser, onSelectFin, setSearchBar
         }
     };
 
-    const handleApplyFilter = () => {
+    const handleApplyFilter = useCallback(() => {
         setActiveModal(null);
         const params = {};
         if (selectedLocation !== 'Kota Asal / Destinasi' && selectedLocation !== 'Semua Lokasi') {
@@ -48,7 +48,7 @@ export default function MarketplacePage({ currentUser, onSelectFin, setSearchBar
             params.category = activeCategory;
         }
         fetchListings(params);
-    };
+    }, [selectedLocation, selectedSize, activeCategory]);
 
     // Kirim data props ke Navbar setiap ada perubahan state filter
     useEffect(() => {
@@ -69,7 +69,7 @@ export default function MarketplacePage({ currentUser, onSelectFin, setSearchBar
                 handleApplyFilter,
             });
         }
-    }, [activeModal, selectedLocation, selectedSize, startDate, endDate, activeCategory]);
+    }, [activeModal, selectedLocation, selectedSize, startDate, endDate, activeCategory, handleApplyFilter]);
 
     useEffect(() => {
         fetchListings();
@@ -102,8 +102,15 @@ export default function MarketplacePage({ currentUser, onSelectFin, setSearchBar
 
             {!currentUser && (
                 <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-                    <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 text-sm text-slate-700">
-                        Silakan masuk untuk melihat pesanan dan mengajukan penyewaan.
+                    <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 text-sm text-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <p>Silakan masuk untuk melihat pesanan dan mengajukan penyewaan fins.</p>
+                        <button
+                            type="button"
+                            onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal'))}
+                            className="shrink-0 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 transition"
+                        >
+                            Masuk Sekarang
+                        </button>
                     </div>
                 </section>
             )}

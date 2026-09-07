@@ -38,9 +38,20 @@ export default function AuthModal({ onClose, onSuccess }) {
                 throw new Error(response.data?.message || 'Autentikasi gagal');
             }
 
-            const user = response.data.data;
-            localStorage.setItem('myfinz_user', JSON.stringify(user));
-            localStorage.setItem('myfinz_demo_user_id', user.id);
+            const responseData = response.data.data || response.data;
+            const token = responseData.token || responseData.accessToken;
+            const user = responseData.user || (responseData.id ? responseData : null);
+
+            if (token) {
+                localStorage.setItem('token', token);
+                api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            }
+
+            // Simpan HANYA user asli dari backend (tanpa default/demo ID)
+            if (user) {
+                localStorage.setItem('myfinz_user', JSON.stringify(user));
+            }
+
             onSuccess?.(user);
         } catch (err) {
             setError(err?.response?.data?.message || err.message || 'Terjadi kesalahan.');
@@ -66,7 +77,7 @@ export default function AuthModal({ onClose, onSuccess }) {
                                 name="fullName"
                                 value={form.fullName}
                                 onChange={handleChange}
-                                className="bg-slate-50"
+                                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
                                 placeholder="Nama lengkap"
                                 required
                             />

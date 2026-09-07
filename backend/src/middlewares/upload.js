@@ -1,19 +1,14 @@
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 
-// Konfigurasi tempat penyimpanan dan nama file
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // File disimpan di folder backend/uploads
-    },
-    filename: (req, file, cb) => {
-        // Penamaan file unik: timestamp + acak + ekstensi asli
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    }
-});
+const uploadDir = 'uploads/';
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
 
-// Filter jenis file (hanya menerima gambar)
+const storage = multer.memoryStorage();
+
 const fileFilter = (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|webp/;
     const extName = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -22,11 +17,11 @@ const fileFilter = (req, file, cb) => {
     if (extName && mimeType) {
         return cb(null, true);
     }
-    cb(new Error('Hanya file gambar (jpg, jpeg, png, webp) yang diperbolehkan!'));
+    cb(new Error('Hanya file gambar (JPG, JPEG, PNG, WEBP) yang diperbolehkan!'), false);
 };
 
 export const upload = multer({
     storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // Limit ukuran file maksimal 5MB
+    limits: { fileSize: 10 * 1024 * 1024 },
     fileFilter
 });
