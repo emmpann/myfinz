@@ -16,11 +16,17 @@ const defaultListingForm = {
 };
 
 const formatNumberInput = (value) => {
-  const digits = String(value ?? '').replace(/\D/g, '');
+  if (value === null || value === undefined || value === '') return '';
+  const integerPart = String(value).split('.')[0];
+  const digits = integerPart.replace(/\D/g, '');
   return digits ? Number(digits).toLocaleString('id-ID') : '';
 };
 
-const parseNumberInput = (value) => Number(String(value ?? '').replace(/\./g, '').replace(/\D/g, ''));
+const parseNumberInput = (value) => {
+  if (!value) return 0;
+  const integerPart = String(value).split('.')[0];
+  return Number(integerPart.replace(/\./g, '').replace(/\D/g, ''));
+};
 
 export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, setChatBooking }) {
   const [ownerListings, setOwnerListings] = useState([]);
@@ -154,16 +160,21 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
 
   const handleEditListing = (item) => {
     setEditingListingId(item.id);
+
+    const rawPrice = item.pricePerDay || item.price_per_day || 0;
+    const cleanPrice = Math.floor(Number(rawPrice));
+
     setListingForm({
       title: item.title || '',
       category: item.category || 'Freediving',
-      footPocketType: item.footPocketType || 'Standard',
+      footPocketType: item.footPocketType || item.foot_pocket_type || 'Standard',
       size: item.size || '37-38',
-      pricePerDay: formatNumberInput(item.pricePerDay),
-      locationCity: item.locationCity || 'Jakarta',
-      totalStock: formatNumberInput(item.totalStock),
+      pricePerDay: formatNumberInput(cleanPrice),
+      locationCity: item.locationCity || item.location_city || 'Jakarta',
+      totalStock: formatNumberInput(item.totalStock || item.total_stock),
     });
-    setImagePreview(item.imageUrl || '');
+
+    setImagePreview(item.imageUrl || item.image_url || '');
     setSelectedImageFile(null);
     setListingError('');
     setListingFormOpen(true);
@@ -202,7 +213,7 @@ export default function OwnerDashboardPage({ currentUser, onBackToMarketplace, s
         footPocketType: listingForm.footPocketType,
         size: listingForm.size,
         locationCity: listingForm.locationCity,
-        pricePerDay: parseNumberInput(listingForm.pricePerDay).toFixed(2),
+        pricePerDay: parseNumberInput(listingForm.pricePerDay),
         totalStock: parseNumberInput(listingForm.totalStock),
         availableStock: parseNumberInput(listingForm.totalStock),
         imageUrl: uploadedImageUrl || imagePreview || null,

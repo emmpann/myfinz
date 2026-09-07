@@ -11,8 +11,7 @@ export async function uploadImageController(req, res) {
         }
 
         const filename = `${Date.now()}-${Math.round(Math.random() * 1E9)}.webp`;
-        const uploadDir = process.env.UPLOAD_DIR || 'uploads';
-        const outputPath = path.join(uploadDir, filename);
+        const outputPath = path.join(process.cwd(), process.env.UPLOAD_DIR || 'uploads', filename);
 
         await sharp(req.file.buffer)
             .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })

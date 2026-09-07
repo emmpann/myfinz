@@ -49,7 +49,7 @@ app.use(cors({
 
 app.use(express.json());
 
-app.use('/uploads', express.static(path.join(__dirname, UPLOAD_DIR)));
+app.use('/uploads', express.static(path.join(process.cwd(), process.env.UPLOAD_DIR || 'uploads')));
 
 app.get('/', (req, res) => res.json({ message: 'Backend MyFinz API siap digunakan!' }));
 
