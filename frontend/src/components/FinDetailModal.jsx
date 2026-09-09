@@ -26,7 +26,6 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
     const handleStartDateChange = (value) => {
         setStartDate(value);
         if (endDate && value > endDate) {
-            zaz
             setEndDate('');
         }
         setBookingError('');
@@ -51,6 +50,14 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
             if (typeof window !== 'undefined') {
                 window.dispatchEvent(new CustomEvent('open-auth-modal'));
             }
+            return;
+        }
+
+        // VALIDASI VERIFIKASI EMAIL
+        if (!currentUser.isVerified) {
+            setBookingError(
+                `Email (${currentUser.email}) belum diverifikasi. Silakan cek inbox/spam kamu untuk memverifikasi akun.`
+            );
             return;
         }
 
@@ -101,8 +108,7 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
         } catch (error) {
             const message = error?.response?.data?.message || error.message || 'Gagal mengajukan penyewaan.';
             setBookingError(message);
-        }
-        finally {
+        } finally {
             setSubmitting(false);
         }
     };
@@ -146,7 +152,6 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
     const availableStock = Number(item.availableStock ?? item.totalStock ?? 1);
     const totalStock = Number(item.totalStock || 1);
 
-    // STATUS DINAMIS DARI API (WAITING LIST / AVAILABLE)
     const isWaitingList = item.availabilityStatus === 'WAITING LIST' || availableStock <= 0;
     const displayStatus = isWaitingList ? 'WAITING LIST' : (item.availabilityStatus || 'AVAILABLE');
 
@@ -182,15 +187,12 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
                                 <span>{item.locationCity || 'Indonesia'}</span>
                             </div>
                             <span>•</span>
-
-                            {/* BADGE STATUS TERSEDIADARI API */}
                             <div className={`flex items-center gap-1 font-semibold ${isWaitingList ? 'text-amber-600' : 'text-emerald-600'}`}>
                                 <ShieldCheck className="w-4 h-4" />
                                 <span>Status: {displayStatus}</span>
                             </div>
                         </div>
 
-                        {/* Profil Pemilik / Owner */}
                         <div className="mt-4 flex items-center gap-3 rounded-2xl border border-blue-100 bg-blue-50/50 p-3">
                             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-white font-bold text-xs">
                                 {(item.ownerName || item.lenderName) ? (item.ownerName || item.lenderName).charAt(0).toUpperCase() : <UserRound className="h-4 w-4" />}
@@ -258,14 +260,6 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
                                         <span className="text-2xl font-bold text-slate-900">Rp {pricePerDay.toLocaleString('id-ID')}</span>
                                         <span className="text-xs text-slate-500"> / hari</span>
                                     </div>
-
-                                    {/* STATUS CHIP DINAMIS
-                                    <div className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${isWaitingList
-                                        ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                        : 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                        }`}>
-                                        {displayStatus}
-                                    </div> */}
                                 </div>
 
                                 <div className="space-y-3">
@@ -274,7 +268,6 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
                                         <div><label className="block text-[11px] font-semibold text-slate-600 mb-1">Selesai Sewa</label><div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900">{endDate || 'Pilih tanggal'}</div></div>
                                     </div>
 
-                                    {/* Tombol Toggle Collapse Kalender */}
                                     <button
                                         type="button"
                                         onClick={() => setIsCalendarOpen(!isCalendarOpen)}
@@ -293,7 +286,6 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
                                         )}
                                     </button>
 
-                                    {/* Komponen Kalender Tersembunyi */}
                                     {isCalendarOpen && (
                                         <div className="rounded-xl border border-slate-200 bg-white p-3 transition-all">
                                             <div className="mb-3 flex items-center justify-between"><button type="button" onClick={() => setCalendarDate(new Date(calendarYear, calendarMonth - 1, 1))} className="rounded-lg p-1 text-slate-500 hover:bg-slate-100">‹</button><span className="text-xs font-semibold text-slate-900">{new Date(calendarYear, calendarMonth).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}</span><button type="button" onClick={() => setCalendarDate(new Date(calendarYear, calendarMonth + 1, 1))} className="rounded-lg p-1 text-slate-500 hover:bg-slate-100">›</button></div>
@@ -326,9 +318,11 @@ export default function FinDetailModal({ item, onClose, onBooked, currentUser })
                                     </div>
                                 </div>
 
+                                {/* ALERT INLINE SAMA SEPERTI GAMBAR DENGAN WARNA KUNING AMBER */}
                                 {bookingError && (
-                                    <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
-                                        {bookingError}
+                                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+                                        <p className="font-semibold mb-0.5">Akses Dibatasi</p>
+                                        <p>{bookingError}</p>
                                     </div>
                                 )}
 

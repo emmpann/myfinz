@@ -3,6 +3,7 @@ import { users } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
@@ -63,4 +64,33 @@ export async function getUserByIdService(id) {
 export async function getUserByEmailService(email) {
     const [user] = await db.select().from(users).where(eq(users.email, email));
     return user;
+}
+
+export function generateRandomToken() {
+    return crypto.randomBytes(32).toString('hex');
+}
+
+export async function getUserByVerificationTokenService(token) {
+    const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.emailVerificationToken, token));
+    return user || null;
+}
+
+export async function getUserByResetTokenService(token) {
+    const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.resetPasswordToken, token));
+    return user || null;
+}
+
+export async function updateUserStatusService(id, updateData) {
+    const [updatedUser] = await db
+        .update(users)
+        .set(updateData)
+        .where(eq(users.id, id))
+        .returning();
+    return updatedUser;
 }

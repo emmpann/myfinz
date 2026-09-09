@@ -23,3 +23,18 @@ export function authenticateJWT(req, res, next) {
         });
     }
 }
+
+export async function requireVerifiedEmail(req, res, next) {
+    try {
+        const user = await getUserByIdService(req.user.id);
+        if (!user || !user.isVerified) {
+            return res.status(403).json({
+                success: false,
+                message: 'Akses ditolak. Silakan verifikasi email kamu terlebih dahulu untuk melakukan aksi ini.',
+            });
+        }
+        next();
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}

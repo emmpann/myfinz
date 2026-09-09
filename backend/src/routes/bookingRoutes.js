@@ -5,18 +5,17 @@ import {
     getBookingsByRenter,
     getBookingsByOwner,
 } from '../controllers/bookingController.js';
-import { authenticateJWT } from '../middlewares/authMiddleware.js';
+import { authenticateJWT, requireVerifiedEmail } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
 router.use(authenticateJWT);
 
-router.get('/renter', getBookingsByRenter);
-router.get('/owner', getBookingsByOwner);
-router.get('/renter/:renterId', getBookingsByRenter);
-router.get('/owner/:lenderId', getBookingsByOwner);
-
-router.post('/', createBooking);
-router.patch('/:id/status', updateBookingStatus);
+router.get('/renter', requireVerifiedEmail, getBookingsByRenter);
+router.get('/renter/:renterId', requireVerifiedEmail, getBookingsByRenter);
+router.get('/owner', requireVerifiedEmail, getBookingsByOwner);
+router.get('/owner/:lenderId', requireVerifiedEmail, getBookingsByOwner);
+router.post('/', requireVerifiedEmail, createBooking);
+router.patch('/:id/status', requireVerifiedEmail, updateBookingStatus);
 
 export default router;
